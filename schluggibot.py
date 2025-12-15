@@ -78,8 +78,18 @@ async def check_for_videos():
             channel = client.get_channel(DISCORD_CHANNEL_ID)
             if channel:
                 message = f"🚨 **Neues Video online!** 🚨\n\n**{video_title}**\nSchau es dir hier an: {video_link}"
-                await channel.send(message)
-                logger.info(f"Benachrichtigung gesendet: {video_title}")
+                
+                try:
+                    sent_message = await channel.send(message)
+                    logger.info(f"Benachrichtigung gesendet: {video_title}")
+                    
+                    await sent_message.publish()
+                    logger.info("Nachricht erfolgreich veröffentlicht.")
+                    
+                except discord.HTTPException as e:
+                    logger.warning(f"Nachricht gesendet, aber Publish fehlgeschlagen (Kein Announcement Channel?): {e}")
+                except Exception as e:
+                    logger.error(f"Fehler beim Senden/Publishen: {e}")
             else:
                 logger.error(f"Konnte Nachricht nicht senden: Kanal {DISCORD_CHANNEL_ID} nicht gefunden.")
             
