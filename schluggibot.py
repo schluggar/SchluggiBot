@@ -4,11 +4,13 @@ import discord
 import feedparser
 import os
 import logging
+import json
 
 load_dotenv()
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 YOUTUBE_CHANNEL_ID = os.getenv('YOUTUBE_CHANNEL_ID')
 DISCORD_CHANNEL_ID = int(os.getenv('DISCORD_CHANNEL_ID'))
+LANGUAGE = os.getenv('LANGUAGE', 'en')
 
 FEED_URL = f"https://www.youtube.com/feeds/videos.xml?channel_id={YOUTUBE_CHANNEL_ID}"
 DATA_FILE = "last_video_id.txt"
@@ -28,6 +30,15 @@ console_handler = logging.StreamHandler()
 console_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 logger.addHandler(console_handler)
 
+def load_translations(lang):
+    path = f"locales/{lang}.json"
+    if not os.path.exists(path):
+        path = "locales/en.json" 
+    with open(path, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+texts = load_translations(LANGUAGE)
+
 def get_video_id():
     if not os.path.exists(DATA_FILE):
         return None
@@ -41,13 +52,13 @@ def set_video_id(video_id):
 
 @client.event
 async def on_ready():
-    logger.info(f'Eingeloggt als {client.user}')
+    logger.info(f'Log in as: {client.user}')
 
     current_saved = get_video_id()
     if current_saved:
-        logger.info(f"Letztes bekannte Video-ID: {current_saved}")
+        logger.info(f"Last known Video-ID: {current_saved}")
     else:
-        logger.info("Noch keine Video-ID gespeichert.")
+        logger.info("No Video-ID saved.")
 
     check_for_videos.start()
 
@@ -57,7 +68,7 @@ async def check_for_videos():
         feed = feedparser.parse(FEED_URL)
         
         if not feed.entries:
-            logger.warning("Feed abgerufen, aber keine Einträge gefunden.")
+            logger.warning("Feed retrieved, but no entries found.")
             return
 
         latest_video = feed.entries[0]
@@ -69,7 +80,7 @@ async def check_for_videos():
         
         if last_known_id is None:
             set_video_id(current_video_id)
-            logger.info(f"Aktuelles Video '{video_title}' wurde als Startpunkt gespeichert.")
+            logger.info(f"Current video ‘{video_title}’ has been saved as the starting point.")
             return
 
         if current_video_id != last_known_id:
@@ -77,23 +88,23 @@ async def check_for_videos():
             
             channel = client.get_channel(DISCORD_CHANNEL_ID)
             if channel:
-                message = f"🚨 **Neues Video online!** 🚨\n\n**{video_title}**\nSchau es dir hier an: {video_link}"
+                message = texts['new_video_msg'].format(title=video_title, link=video_link)
                 
                 try:
                     sent_message = await channel.send(message)
-                    logger.info(f"Benachrichtigung gesendet: {video_title}")
+                    logger.info(f"Notification sent: {video_title}")
                     
                     await sent_message.publish()
-                    logger.info("Nachricht erfolgreich veröffentlicht.")
+                    logger.info("Message successfully published.")
                     
                 except discord.HTTPException as e:
-                    logger.warning(f"Nachricht gesendet, aber Publish fehlgeschlagen (Kein Announcement Channel?): {e}")
+                    logger.warning(f"Message sent, but publish failed (no announcement channel?): {e}")
                 except Exception as e:
-                    logger.error(f"Fehler beim Senden/Publishen: {e}")
+                    logger.error(f"Error while sending/publishing: {e}")
             else:
-                logger.error(f"Konnte Nachricht nicht senden: Kanal {DISCORD_CHANNEL_ID} nicht gefunden.")
+                logger.error(f"Could not send message: Channel {DISCORD_CHANNEL_ID} not found.")
             
     except Exception as e:
-        logger.error(f"Fehler im Loop: {e}")
+        logger.error(f"Error in loop: {e}")
 
 client.run(DISCORD_TOKEN)
