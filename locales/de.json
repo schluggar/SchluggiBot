@@ -1,3 +1,3 @@
 {
-    "new_video_msg": "🚨 **Neues Video online!** 🚨\n\n**{title}**\nSchau es dir hier an: {link}"
+    "new_video_msg": "@everyone\n\n🚨 **Neues Video online!** 🚨\n\n**{title}**\nSchau es dir hier an: {link}"
 }
