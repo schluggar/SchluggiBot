@@ -10,6 +10,7 @@ load_dotenv()
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 YOUTUBE_CHANNEL_ID = os.getenv('YOUTUBE_CHANNEL_ID')
 DISCORD_CHANNEL_ID = int(os.getenv('DISCORD_CHANNEL_ID'))
+AUTO_ROLE_ID = int(os.getenv('AUTO_ROLE_ID'))
 LANGUAGE = os.getenv('LANGUAGE', 'en')
 
 FEED_URL = f"https://www.youtube.com/feeds/videos.xml?channel_id={YOUTUBE_CHANNEL_ID}"
@@ -17,6 +18,7 @@ DATA_FILE = "last_video_id.txt"
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.members = True 
 client = discord.Client(intents=intents)
 
 logger = logging.getLogger('schluggibot')
@@ -61,6 +63,24 @@ async def on_ready():
         logger.info("No Video-ID saved.")
 
     check_for_videos.start()
+
+@client.event
+async def on_member_join(member):
+    if AUTO_ROLE_ID is None:
+        logger.warning("AUTO_ROLE_ID is not configured.")
+        return
+
+    role = member.guild.get_role(AUTO_ROLE_ID)
+    if role:
+        try:
+            await member.add_roles(role)
+            logger.info(f"Role '{role.name}' given to {member.name}.")
+        except discord.Forbidden:
+            logger.error("Error: Bot doesn't have the right to assign roles to users.")
+        except Exception as e:
+            logger.error(f"Error assigning role: {e}")
+    else:
+        logger.error(f"Role with ID {AUTO_ROLE_ID} not found.")
 
 @tasks.loop(minutes=10)
 async def check_for_videos():
