@@ -10,9 +10,9 @@ load_dotenv()
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 YOUTUBE_CHANNEL_ID = os.getenv('YOUTUBE_CHANNEL_ID')
 DISCORD_CHANNEL_ID = int(os.getenv('DISCORD_CHANNEL_ID'))
-AUTO_ROLE_ID = os.getenv('AUTO_ROLE_ID')
-if AUTO_ROLE_ID:
-    AUTO_ROLE_ID = int(AUTO_ROLE_ID)
+WELCOME_ROLE_ID = os.getenv('WELCOME_ROLE_ID')
+if WELCOME_ROLE_ID:
+    WELCOME_ROLE_ID = int(WELCOME_ROLE_ID)
 LANGUAGE = os.getenv('LANGUAGE', 'en')
 
 FEED_URL = f"https://www.youtube.com/feeds/videos.xml?channel_id={YOUTUBE_CHANNEL_ID}"
@@ -68,11 +68,11 @@ async def on_ready():
 
 @client.event
 async def on_member_join(member):
-    if AUTO_ROLE_ID is None:
-        logger.warning("AUTO_ROLE_ID is not configured.")
+    if WELCOME_ROLE_ID is None:
+        logger.warning("WELCOME_ROLE_ID is not configured.")
         return
 
-    role = member.guild.get_role(AUTO_ROLE_ID)
+    role = member.guild.get_role(WELCOME_ROLE_ID)
     if role:
         try:
             await member.add_roles(role)
@@ -82,7 +82,7 @@ async def on_member_join(member):
         except Exception as e:
             logger.error(f"Error assigning role: {e}")
     else:
-        logger.error(f"Role with ID {AUTO_ROLE_ID} not found.")
+        logger.error(f"Role with ID {WELCOME_ROLE_ID} not found.")
 
 @tasks.loop(minutes=10)
 async def check_for_videos():
