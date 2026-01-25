@@ -10,7 +10,9 @@ load_dotenv()
 DISCORD_TOKEN = os.getenv('DISCORD_TOKEN')
 YOUTUBE_CHANNEL_ID = os.getenv('YOUTUBE_CHANNEL_ID')
 DISCORD_CHANNEL_ID = int(os.getenv('DISCORD_CHANNEL_ID'))
-AUTO_ROLE_ID = int(os.getenv('AUTO_ROLE_ID'))
+AUTO_ROLE_ID = os.getenv('AUTO_ROLE_ID')
+if AUTO_ROLE_ID:
+    AUTO_ROLE_ID = int(AUTO_ROLE_ID)
 LANGUAGE = os.getenv('LANGUAGE', 'en')
 
 FEED_URL = f"https://www.youtube.com/feeds/videos.xml?channel_id={YOUTUBE_CHANNEL_ID}"
