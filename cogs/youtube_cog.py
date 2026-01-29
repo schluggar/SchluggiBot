@@ -36,6 +36,11 @@ class YoutubeCog(commands.Cog):
             return None
 
     def set_last_id(self, video_id):
+        dir_name = os.path.dirname(self.data_file)
+        if dir_name and not os.path.exists(dir_name):
+            os.makedirs(dir_name)
+            logger.info(f"Created directory: {dir_name}")
+
         data = {}
         if os.path.exists(self.data_file):
             try:
