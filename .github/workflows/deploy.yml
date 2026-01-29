@@ -19,33 +19,12 @@ jobs:
           username: ${{ secrets.UBERSPACE_USER }}
           key: ${{ secrets.UBERSPACE_SSH_KEY }}
           script: |
-            echo "--- DEBUG INFO ---"
-            echo "Aktueller Nutzer: $(whoami)"
-            echo "Aktuelles Verzeichnis: $(pwd)"
-            
-            # Wir suchen den Pfad automatisch, falls 'schluggibot' im Home liegt
-            TARGET_DIR="$HOME/schluggibot"
-            
-            if [ -d "$TARGET_DIR" ]; then
-                echo "Ordner gefunden: $TARGET_DIR"
-                cd "$TARGET_DIR" || exit 1
-            else
-                echo "FEHLER: Ordner $TARGET_DIR wurde nicht gefunden!"
-                echo "Inhalt von HOME:"
-                ls -F $HOME
-                exit 1
-            fi
+            cd ~/schluggibot || exit 1
 
-            echo "--- START DEPLOYMENT ---"
+            git reset --hard
             git pull origin main
-            
-            # Sicherstellen, dass die venv genutzt wird
-            if [ -f "./venv/bin/pip" ]; then
-                ./venv/bin/pip install --upgrade pip
-                ./venv/bin/pip install -r requirements.txt
-            else
-                echo "WARNUNG: venv wurde nicht gefunden in $(pwd)/venv"
-            fi
-            
+
+            ./venv/bin/pip install --upgrade pip
+            ./venv/bin/pip install -r requirements.txt || echo "Einige Pakete konnten nicht installiert werden, fahre trotzdem fort..."
+
             supervisorctl restart schluggibot
-            echo "--- DEPLOYMENT BEENDET ---"
