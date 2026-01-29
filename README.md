@@ -22,7 +22,7 @@ To run this bot, you will need:
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/schluggar/SchluggiBot.git](https://github.com/schluggar/SchluggiBot.git)
+    git clone https://github.com/schluggar/SchluggiBot.git
     cd SchluggiBot
     ```
 
