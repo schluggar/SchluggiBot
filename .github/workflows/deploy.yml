@@ -1,0 +1,25 @@
+name: Deploy SchluggiBot
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy to Uberspace via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.UBERSPACE_HOST }}
+          username: ${{ secrets.UBERSPACE_USER }}
+          key: ${{ secrets.UBERSPACE_SSH_KEY }}
+          script: |
+            cd ~/home/schlugga/schluggibot
+            git pull origin main
+            pip install -r requirements.txt
+            supervisorctl restart schluggibot
