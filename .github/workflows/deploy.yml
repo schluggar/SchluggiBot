@@ -19,7 +19,7 @@ jobs:
           username: ${{ secrets.UBERSPACE_USER }}
           key: ${{ secrets.UBERSPACE_SSH_KEY }}
           script: |
-            cd ~/home/schlugga/schluggibot
+            cd /home/schlugga/schluggibot
             git pull origin main
             pip install -r requirements.txt
             supervisorctl restart schluggibot
