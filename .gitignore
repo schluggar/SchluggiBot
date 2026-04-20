@@ -1,9 +1,10 @@
 .env
 cogs/__pycache__
-resources/video_id.json
-
+resources/*
 venv/
 .venv/
 env/
 
 *.log
+
+.cache

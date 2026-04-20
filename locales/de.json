@@ -1,3 +1,4 @@
 {
-    "new_video_msg": "@everyone\n\n🚨 **Neues Video online!** 🚨\n\n**{title}**\nSchau es dir hier an: {link}"
+    "new_video_msg": "@everyone\n\n🚨 **Neues Video online!** 🚨\n\n**{title}**\nSchau es dir hier an: {link}",
+    "new_release_msg": "@everyone\n\n🎵 **Neuer Spotify Release online!** 🎵\n\n**{title}**\nHier anhören: {link}"
 }

@@ -24,6 +24,15 @@ jobs:
             git reset --hard
             git pull origin main
 
+            echo "DISCORD_TOKEN=${{ secrets.DISCORD_TOKEN }}" > .env
+            echo "DISCORD_CHANNEL_ID=${{ secrets.DISCORD_CHANNEL_ID }}" >> .env
+            echo "YOUTUBE_CHANNEL_ID=${{ secrets.YOUTUBE_CHANNEL_ID }}" >> .env
+            echo "WELCOME_ROLE_ID=${{ secrets.WELCOME_ROLE_ID }}" >> .env
+            echo "LANGUAGE=${{ secrets.LANGUAGE }}" >> .env
+            echo "SPOTIFY_CLIENT_ID=${{ secrets.SPOTIFY_CLIENT_ID }}" >> .env
+            echo "SPOTIFY_CLIENT_SECRET=${{ secrets.SPOTIFY_CLIENT_SECRET }}" >> .env
+            echo "SPOTIFY_ARTIST_ID=${{ secrets.SPOTIFY_ARTIST_ID }}" >> .env
+
             ./venv/bin/pip install --upgrade pip
             ./venv/bin/pip install -r requirements.txt || echo "Einige Pakete konnten nicht installiert werden, fahre trotzdem fort..."
 

@@ -79,14 +79,14 @@ class YoutubeCog(commands.Cog):
                     try:
                         sent_message = await channel.send(message)
                         logger.info(f"Notification sent: {latest_video.title}")
-                        
-                        await sent_message.publish()
-                        logger.info("Message successfully published.")
-                        
-                    except discord.HTTPException as e:
-                        logger.warning(f"Message sent, but publish failed (no announcement channel?): {e}")
+                        if channel.type == discord.ChannelType.news:
+                            try:
+                                await sent_message.publish()
+                                logger.info("Message successfully published.")
+                            except discord.Forbidden:
+                                logger.warning("Could not publish YouTube message: Missing 'Manage Messages' permission.")
                     except Exception as e:
-                        logger.error(f"Error while sending/publishing: {e}")
+                        logger.error(f"Error while sending YouTube notification: {e}")
                 else:
                     logger.error(f"Could not send message: Channel {self.channel_id} not found. {self.bot.get_channel(self.channel_id)}")
         except Exception as e:
