@@ -13,3 +13,4 @@ python-dotenv==1.2.1
 sgmllib3k==1.0.0
 yarl==1.22.0
 spotipy==2.25.1
+urllib3<2.0.0
